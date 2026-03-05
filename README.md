@@ -24,13 +24,38 @@ python pingbar.py
 - ログイン時の自動起動設定が可能
 - Dockに表示されず、メニューバーのみに常駐
 
+### ビルド手順
+
 ```bash
+# 1. 古いビルドをクリーンアップ（推奨）
+rm -rf build dist
+
+# 2. .appをビルド
 python setup.py py2app
-# dist/PingBar.app が生成される
+
+# 3. コード署名
+codesign --force --deep --sign - dist/PingBar.app
+
+# 4. Applicationsフォルダにコピー
 cp -r dist/PingBar.app /Applications/
 ```
 
 ビルド後は `/Applications/PingBar.app` をダブルクリックで起動できます。
+
+### トラブルシューティング
+
+もし "Launch error" が発生した場合：
+
+```bash
+# エラーログを確認
+/Applications/PingBar.app/Contents/MacOS/PingBar
+
+# libffi.8.dylibエラーの場合（setup.pyで自動対応済み）
+# 手動で追加する場合：
+cp $(python -c "import sys; print(sys.prefix)")/lib/libffi.8.dylib \
+   /Applications/PingBar.app/Contents/Frameworks/
+codesign --force --deep --sign - /Applications/PingBar.app
+```
 
 ## カスタマイズ
 

@@ -21,14 +21,25 @@
 ### 1.2 アプリケーションのビルド
 
 ```bash
-# クリーンビルド
+# 1. クリーンビルド
 rm -rf build dist
+
+# 2. .appをビルド（setup.pyがlibffi.8.dylibを自動検出してバンドル）
 python setup.py py2app
+
+# 3. コード署名
+codesign --force --deep --sign - dist/PingBar.app
 ```
+
+**注意:** `setup.py` は自動的に現在のPython環境から `libffi.8.dylib` を検出してバンドルします。ビルド時にメッセージを確認してください。
 
 ### 1.3 動作確認
 
 ```bash
+# エラーがないか事前確認
+dist/PingBar.app/Contents/MacOS/PingBar
+
+# 正常に起動すれば、Finderから起動
 open dist/PingBar.app
 ```
 
